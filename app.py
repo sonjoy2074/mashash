@@ -86,13 +86,13 @@ BOOK_PRESETS = {
     "pocket_book": {
         "name": "Pocket Book",
         "size": "5x7",
-        "aspect_ratio": "5:7",
+        "aspect_ratio": "3:4",
         "description": "5x7 compact portrait format, pocket-sized book illustration, cozy composition"
     },
     "dream_book": {
         "name": "Dream Book",
         "size": "8x10",
-        "aspect_ratio": "4:5",
+        "aspect_ratio": "3:4",
         "description": "8x10 large portrait format, dreamy storybook illustration, expansive composition"
     },
     "art_book": {
@@ -143,9 +143,15 @@ async def generate_image(
         response = client.models.generate_content(
             model="gemini-2.5-flash-image",
             contents=[final_prompt],
+            config={
+                "response_modalities": ["image", "text"],
+                "image_config": {
+                    "aspect_ratio": book_info['aspect_ratio']
+                }
+            }
         )
 
-        # Extract generated image
+        #Extract generated image
         for part in response.candidates[0].content.parts:
             if part.inline_data is not None:
                 image = Image.open(BytesIO(part.inline_data.data))
